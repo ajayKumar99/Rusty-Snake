@@ -57,7 +57,7 @@ impl Game {
             return;
         }
 
-        self.update_snake();
+        self.update_snake(dir);
     }
 
     pub fn draw(self, con: &Context, g: &mut G2d) {
@@ -74,6 +74,26 @@ impl Game {
 
         if self.game_over {
             draw_rectangle(GAMEOVER_COLOR, 0, 0, self.width, self.height, con, g);
+        }
+    }
+
+    pub fn update(&mut self, delta_time: f64) {
+        self.waiting_time += delta_time;
+
+        if self.game_over {
+            if self.waiting_time > RESTART_TIME {
+                self.restart();
+            }
+
+            return;
+        }
+
+        if !self.food_exists {
+            self.add_food();
+        }
+
+        if self.waiting_time > MOVING_PERIOD {
+            self.update_snake(None);
         }
     }
 }
